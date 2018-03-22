@@ -37,13 +37,11 @@ class Attention(nn.Module):
         
         s = self.score(q,c)
         
-        # 인코딩 마스킹
         if encoder_lengths is not None:
             mask = s.data.new(batch_size, n_q, n_c)
             mask = self.fill_context_mask(mask, sizes=encoder_lengths, v_mask=float('-inf'), v_unmask=0)
             s = Variable(mask) + s
         
-        # softmax로 normalize
         w = F.softmax(s,2) # B,1,T
         
         # Combine
@@ -148,13 +146,11 @@ class IntraTempAttention(nn.Module):
         else:
             s = F.softmax(torch.cat(self.energies,1),1)[:,-1].unsqueeze(1) # B,1,T
         
-        # 인코딩 마스킹
         if encoder_lengths is not None:
             mask = s.data.new(batch_size, n_q, n_c)
             mask = self.fill_context_mask(mask, sizes=encoder_lengths, v_mask=float('-inf'), v_unmask=0)
             s = Variable(mask) + s
 
-        # softmax로 normalize
         w = F.softmax(s,2) # B,1,T
         
         # Combine
