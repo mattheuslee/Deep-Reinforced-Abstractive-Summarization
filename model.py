@@ -4,11 +4,7 @@ from torch.autograd import Variable
 import torch.optim as optim
 import torch.nn.functional as F
 from torch.nn.utils.rnn import PackedSequence,pack_padded_sequence
-try:
-    from attention import Attention, IntraTempAttention
-except:
-    from .attention import Attention, IntraTempAttention
-
+from attention import Attention, IntraTempAttention
     
 class Encoder(nn.Module):
     def __init__(self, input_size, embedding_size,hidden_size, n_layers=1,bidirec=False,dropout_p=0.5,use_cuda=False):
