@@ -35,7 +35,7 @@ for story_filename in tqdm(story_filenames):
         elif not in_summary:
             paragraph.append(line)
     if len(paragraph) > 0 and len(summary) > 0:
-        paragraph = " ".join(" ".join(paragraph).split()[:STORY_LENGTH + 1])
+        paragraph = " ".join(" ".join(paragraph).split()[:STORY_LENGTH])
         summary = " ".join(summary[:NUM_SUMMARIES_TO_SAVE])
         stories.append({"paragraph": paragraph, "summary": summary})
         #cnn_stories_file.write(paragraph + "\t" + summary + "\n")
