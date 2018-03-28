@@ -11,6 +11,9 @@ story_filenames = os.listdir("./cnn")
 np.random.shuffle(story_filenames)
 tqdm.write("Number of stories: {}".format(len(story_filenames)))
 
+def is_ascii(s):
+    return all(ord(c) < 138 for c in s)
+
 stories = []
 for story_filename in tqdm(story_filenames):
     if len(stories) == NUM_STORIES_TO_SAVE:
@@ -35,10 +38,14 @@ for story_filename in tqdm(story_filenames):
         elif not in_summary:
             paragraph.append(line)
     if len(paragraph) > 0 and len(summary) > 0:
-        paragraph = " ".join(" ".join(paragraph).split()[:STORY_LENGTH])
-        summary = " ".join(summary[:NUM_SUMMARIES_TO_SAVE])
+        # Ensure all paragraph tokens are ascii
+        paragraph_tokens = " ".join(paragraph).split()
+        summary_tokens   = " ".join(summary[:NUM_SUMMARIES_TO_SAVE]).split()
+        paragraph_tokens = [token for token in paragraph_tokens if is_ascii(token)]
+        summary_tokens   = [token for token in summary_tokens if is_ascii(token)]
+        paragraph = " ".join(paragraph_tokens[:STORY_LENGTH])
+        summary   = " ".join(summary_tokens)
         stories.append({"paragraph": paragraph, "summary": summary})
-        #cnn_stories_file.write(paragraph + "\t" + summary + "\n")
 
 train, test = train_test_split(stories, train_size = 0.8)
 test, valid = train_test_split(test, train_size = 0.8)
