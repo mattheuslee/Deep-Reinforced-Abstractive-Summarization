@@ -85,7 +85,7 @@ class BeamSearch:
 
         # Intra Temporal Attention
         context_e = decoder.enc_attention(hidden.transpose(0,1), encoder_outputs, input_lengths)
-        context_d = decoder.init_context(inputs.size(0)).transpose(0,1)
+        context_d = decoder.init_context(1).transpose(0,1) # 1 replaces batch size
 
         concat = torch.cat([hidden.transpose(0,1),context_e,context_d],2) # B,1,3D
         scores = decoder.linear(concat.view(concat.size(0)*concat.size(1),-1)) # B,V
