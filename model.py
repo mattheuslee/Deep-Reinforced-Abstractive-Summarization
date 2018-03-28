@@ -73,7 +73,7 @@ class Encoder(nn.Module):
 
     
 class Decoder(nn.Module):
-    def __init__(self, input_size, embedding_size, hidden_size, n_layers=1,dropout_p=0.3,use_cuda=False):
+    def __init__(self, input_size, embedding_size, hidden_size, n_layers=1,dropout_p=0.3,use_cuda=False,use_softmax=False):
         super(Decoder, self).__init__()
         
         self.hidden_size = hidden_size
@@ -88,6 +88,7 @@ class Decoder(nn.Module):
         self.dec_attention = Attention(hidden_size)
         self.enc_attention = IntraTempAttention(hidden_size)
         self.use_cuda = use_cuda
+        self.use_softmax = use_softmax
         self.init_weight()
         
     def cuda(self, device=None):
@@ -143,7 +144,10 @@ class Decoder(nn.Module):
             concat = torch.cat([hidden.transpose(0,1),context_e,context_d],2) # B,1,3D
             score = self.linear(concat.view(concat.size(0)*concat.size(1),-1)) # B,V
             decode.append(score)
-            decoded = F.log_softmax(score,1)
+            if self.use_softmax:
+                decoded = F.softmax(score,1)
+            else:
+                decoded = F.log_softmax(score,1)
             embedded = self.embedding(decoded.max(1)[1]).unsqueeze(1) # y_{t-1}
             embedded = self.dropout(embedded)
             
