@@ -4,10 +4,6 @@ from torch.autograd import Variable
 import numpy as np
 
 class BeamSearch:
-    def __init__(self, activation = nn.Softmax):
-
-        self.activation = activation()
-
     """
     last_hidden    : last LSTM hidden output
     last_cell      : last LSTM cell state
@@ -90,5 +86,5 @@ class BeamSearch:
         concat = torch.cat([hidden.transpose(0,1),context_e,context_d],2) # B,1,3D
         scores = decoder.linear(concat.view(concat.size(0)*concat.size(1),-1)) # B,V
 
-        scores = nn.Softmax()(scores)
+        scores = nn.Softmax(1)(scores)
         return (hidden, cell, scores)
